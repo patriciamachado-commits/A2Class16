@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2 Session 16: Final Assessment</title>
+    <style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#2E7D32;min-height:100vh;padding:20px}
+.container{max-width:800px;margin:0 auto}
+.header{background:#fff;border-radius:20px;padding:30px;margin-bottom:20px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.header h1{color:#2E7D32;font-size:1.4em}
+.header p{color:#888}
+.badge{background:#ef4444;color:#fff;padding:4px 12px;border-radius:20px;font-size:.8em}
+.level-badge{background:#2E7D32;color:#fff;padding:6px 16px;border-radius:20px;font-size:.9em;display:inline-block;margin-bottom:10px}
+.card{background:#fff;border-radius:16px;padding:25px;margin-bottom:20px}
+.card h2{color:#2E7D32;margin-bottom:15px}
+label{font-weight:600;color:#333;display:block;margin-bottom:8px}
+input[type="text"],select{width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:12px;font-size:16px;margin-bottom:15px}
+input:focus,select:focus{outline:none;border-color:#2E7D32}
+.btn{background:#2E7D32;color:#fff;border:none;padding:14px 32px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;width:100%;margin-top:10px;transition:all .2s}
+.btn:hover{background:#1B5E20}
+.btn:disabled{opacity:.5}
+.btn-orange{background:#F5A623}
+.btn-secondary{background:#f5f5f5;color:#333}
+.section{display:none}
+.section.active{display:block}
+.reading-box{background:#f8f9fa;border-radius:12px;padding:20px;margin-bottom:20px;border-left:4px solid #2E7D32;line-height:1.8}
+.question{background:#f8f9fa;border-radius:12px;padding:20px;margin:15px 0;border:1px solid #eee}
+.question h4{margin-bottom:15px;color:#333}
+.option{padding:14px;border:2px solid #e0e0e0;border-radius:10px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.option:hover{border-color:#2E7D32;background:#f1f8e9}
+.option.selected{border-color:#2E7D32;background:#e8f5e9}
+.option.correct{border-color:#22c55e;background:#f0fdf4}
+.option.incorrect{border-color:#ef4444;background:#fef2f2}
+.circle{width:20px;height:20px;border:2px solid #ccc;border-radius:50%;flex-shrink:0}
+.option.selected .circle{border-color:#2E7D32;background:#2E7D32}
+textarea{width:100%;min-height:120px;padding:14px;border:2px solid #e0e0e0;border-radius:12px;font-size:16px;font-family:inherit;resize:vertical}
+textarea:focus{outline:none;border-color:#2E7D32}
+.progress{height:8px;background:#e0e0e0;border-radius:4px;margin-bottom:20px}
+.progress-bar{height:100%;background:#F5A623;border-radius:4px;transition:width .3s}
+.progress-text{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:#666}
+.score-card{background:linear-gradient(135deg,#2E7D32,#43A047);border-radius:20px;padding:35px;color:#fff;text-align:center}
+.score-big{font-size:4em;font-weight:700}
+.scores{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}
+.scores>div{background:rgba(255,255,255,.15);border-radius:12px;padding:12px}
+.scores label{font-size:.75em;opacity:.9}
+.scores span{font-size:1.4em;font-weight:700;display:block}
+.record-btn{width:80px;height:80px;border-radius:50%;background:#fff;border:3px solid #2E7D32;cursor:pointer;margin:20px auto;display:flex;align-items:center;justify-content:center;font-size:32px}
+.record-btn:hover{background:#f1f8e9}
+.record-btn.recording{border-color:#ef4444;background:#fef2f2;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 15px rgba(239,68,68,0)}}
+.timer{text-align:center;font-size:28px;font-weight:700;color:#2E7D32}
+.status{text-align:center;color:#666;margin-top:10px}
+audio{width:100%;margin-top:15px}
+.hidden{display:none}
+.feedback{background:#f1f8e9;border:1px solid #2E7D32;border-radius:12px;padding:20px;margin-top:15px}
+.feedback h4{color:#2E7D32;margin-bottom:10px}
+.nav-buttons{display:flex;justify-content:space-between;margin-top:20px;gap:10px}
+.cefr-box{background:linear-gradient(135deg,#1565C0,#1976D2);color:#fff;border-radius:12px;padding:20px;margin-top:20px;text-align:center}
+.cefr-box h3{margin-bottom:10px}
+.cefr-level{font-size:2em;font-weight:700}
+.transcript-box{background:#e8f5e9;border:2px solid #a5d6a7;border-radius:8px;padding:15px;margin-top:15px;min-height:60px;color:#2e7d32}
+.not-submitted{background:#ffebee;border:2px solid #ef5350;border-radius:12px;padding:20px;text-align:center;animation:pulse-warning 2s infinite}
+.not-submitted h3{color:#c62828;margin-bottom:10px}
+@keyframes pulse-warning{0%,100%{box-shadow:0 0 0 0 rgba(239,83,80,.4)}50%{box-shadow:0 0 0 10px rgba(239,83,80,0)}}
+.submitted-success{background:#e8f5e9;border:2px solid #66bb6a;border-radius:12px;padding:20px;text-align:center;display:none}
+.submitted-success h3{color:#2e7d32}
+.prompt-box{background:#f1f8e9;border:1px solid #c8e6c9;border-radius:12px;padding:20px;margin-bottom:20px}
+.prompt-box h4{color:#2E7D32;margin-bottom:10px}
+.word-count{text-align:right;color:#888;font-size:14px;margin-top:8px}
+@media(max-width:600px){.scores{grid-template-columns:repeat(3,1fr)}.nav-buttons{flex-direction:column}}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="level-badge">CEFR Level A2 - Elementary</div>
+        <h1>📚 Session 16: Final Assessment <span class="badge">FINAL</span></h1>
+        <p>Week 8 • Practical Skills II Complete Review</p>
+    </div>
+
+    <!-- Start Section -->
+    <div class="section active" id="start">
+        <div class="card">
+            <h2>Welcome to Your Final Assessment!</h2>
+            <p style="color:#666;margin-bottom:20px">This assessment covers everything you learned in A2:</p>
+            <ul style="color:#666;margin-bottom:20px;padding-left:20px">
+                <li>Present Simple & Present Continuous</li>
+                <li>Past Simple (regular & irregular verbs)</li>
+                <li>Modal Verbs (can, could, should)</li>
+                <li>Vocabulary: Weather, Work, Family, Health, Housing, Travel</li>
+            </ul>
+            <label>Your Full Name</label>
+            <input type="text" id="studentName" placeholder="Enter your name...">
+            <label>Your Class</label>
+            <select id="studentClass">
+                <option value="">Select your class...</option>
+                <option value="A2-MW-9AM">A2 - Mon/Wed 9:00 AM</option>
+                <option value="A2-MW-11AM">A2 - Mon/Wed 11:00 AM</option>
+                <option value="A2-MW-8PM">A2 - Mon/Wed 8:00 PM</option>
+                <option value="A2-TTH-9AM">A2 - Tue/Thu 9:00 AM</option>
+                <option value="A2-TTH-11AM">A2 - Tue/Thu 11:00 AM</option>
+                <option value="A2-TTH-8PM">A2 - Tue/Thu 8:00 PM</option>
+            </select>
+            <button class="btn" onclick="startQuiz()">Start Final Assessment →</button>
+        </div>
+    </div>
+
+    <!-- Section 1: Reading -->
+    <div class="section" id="s1">
+        <div class="card">
+            <div class="progress-text"><span>Section 1 of 5</span><span>20%</span></div>
+            <div class="progress"><div class="progress-bar" style="width:20%"></div></div>
+            <h2>📖 1. Reading Comprehension</h2>
+            <div class="reading-box">
+                <p><strong>Maria's Life in America</strong></p>
+                <p>Maria moved to the United States two years ago from Mexico. At first, everything was difficult. She didn't speak English well.</p>
+                <p>Now, Maria works at a hospital as a nurse's assistant. She usually works from 7 AM to 3 PM. She likes her job because she can help people.</p>
+                <p>Last month, Maria had a problem with her apartment. The heater was broken. She called her landlord and said, "Could you please fix the heater?" The landlord came the next day.</p>
+                <p>"I should study more English," Maria says. "I want to become a nurse."</p>
+            </div>
+            <div id="readingQuestions"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="goBack0()">← Back</button>
+                <button class="btn" onclick="checkS1()">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Vocabulary -->
+    <div class="section" id="s2">
+        <div class="card">
+            <div class="progress-text"><span>Section 2 of 5</span><span>40%</span></div>
+            <div class="progress"><div class="progress-bar" style="width:40%"></div></div>
+            <h2>📝 2. Vocabulary Review</h2>
+            <div id="vocabQuestions"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="goTo('s1')">← Back</button>
+                <button class="btn" onclick="checkS2()">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Writing -->
+    <div class="section" id="s3">
+        <div class="card">
+            <div class="progress-text"><span>Section 3 of 5</span><span>60%</span></div>
+            <div class="progress"><div class="progress-bar" style="width:60%"></div></div>
+            <h2>✍️ 3. Writing</h2>
+            <div class="prompt-box">
+                <h4>Writing Task</h4>
+                <p>Write about <strong>your daily routine</strong> (6-8 sentences).</p>
+                <ul style="padding-left:20px;color:#666;margin-top:10px">
+                    <li>What time do you wake up?</li>
+                    <li>What do you do in the morning?</li>
+                    <li>What do you do at work or school?</li>
+                    <li>What do you do in the evening?</li>
+                </ul>
+            </div>
+            <textarea id="writing" placeholder="Write here..." oninput="updateWC()"></textarea>
+            <div class="word-count">Words: <span id="wc">0</span></div>
+            <div class="feedback hidden" id="wFeedback"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="goTo('s2')">← Back</button>
+                <button class="btn" id="wBtn" onclick="checkWriting()">Get Feedback →</button>
+                <button class="btn hidden" id="wNext" onclick="goTo('s4')">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Speaking -->
+    <div class="section" id="s4">
+        <div class="card">
+            <div class="progress-text"><span>Section 4 of 5</span><span>80%</span></div>
+            <div class="progress"><div class="progress-bar" style="width:80%"></div></div>
+            <h2>🎤 4. Speaking - Role Play</h2>
+            <div class="prompt-box">
+                <h4>Choose ONE scenario and record yourself (30-60 seconds):</h4>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+                <div class="scenario-option" onclick="selectScenario(this,1)" style="padding:15px;border:2px solid #e0e0e0;border-radius:12px;cursor:pointer">
+                    <strong>🏠 Scenario 1: Tenant and Landlord</strong>
+                    <p style="color:#666;font-size:14px;margin-top:5px">You are a tenant. Call your landlord because something is broken in your apartment. Explain the problem and ask for help.</p>
+                </div>
+                <div class="scenario-option" onclick="selectScenario(this,2)" style="padding:15px;border:2px solid #e0e0e0;border-radius:12px;cursor:pointer">
+                    <strong>🏥 Scenario 2: Doctor/Nurse and Patient</strong>
+                    <p style="color:#666;font-size:14px;margin-top:5px">You are a patient. Tell the doctor your symptoms and answer their questions. Ask for advice.</p>
+                </div>
+                <div class="scenario-option" onclick="selectScenario(this,3)" style="padding:15px;border:2px solid #e0e0e0;border-radius:12px;cursor:pointer">
+                    <strong>✈️ Scenario 3: Friends Sharing a Vacation</strong>
+                    <p style="color:#666;font-size:14px;margin-top:5px">Tell your friend about a past vacation. Where did you go? What did you do? Did you enjoy it?</p>
+                </div>
+            </div>
+            <div id="scenarioSelected" style="display:none;background:#e8f5e9;padding:10px;border-radius:8px;margin-bottom:15px;text-align:center;color:#2E7D32;font-weight:600"></div>
+            <button class="record-btn" id="recBtn" onclick="toggleRec()" style="display:none">🎤</button>
+            <div class="timer" id="timer" style="display:none">0:00</div>
+            <div class="status" id="recStatus" style="display:none">Click to start recording</div>
+            <audio id="audio" controls class="hidden"></audio>
+            <div class="transcript-box" id="transcriptBox" style="display:none">Your speech will appear here...</div>
+            <div class="feedback hidden" id="sFeedback"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="goTo('s3')">← Back</button>
+                <button class="btn" id="sBtn" onclick="checkSpeaking()" disabled>Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Grammar -->
+    <div class="section" id="s5">
+        <div class="card">
+            <div class="progress-text"><span>Section 5 of 5</span><span>100%</span></div>
+            <div class="progress"><div class="progress-bar" style="width:100%"></div></div>
+            <h2>📚 5. Grammar Quiz</h2>
+            <div id="grammarQuestions"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="goTo('s4')">← Back</button>
+                <button class="btn btn-orange" onclick="submitFinal()">Submit Final Assessment ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="section" id="results">
+        <div class="score-card">
+            <p style="opacity:.8">🎉 Congratulations! A2 Course Complete! 🎉</p>
+            <div class="score-big" id="finalPct">0%</div>
+            <p id="studentDisplay"></p>
+            <div class="scores">
+                <div><label>Reading</label><span id="scL">0/3</span></div>
+                <div><label>Vocab</label><span id="scV">0/6</span></div>
+                <div><label>Writing</label><span id="scW">0/20</span></div>
+                <div><label>Speaking</label><span id="scS">0/20</span></div>
+                <div><label>Grammar</label><span id="scG">0/8</span></div>
+            </div>
+            <div class="cefr-box">
+                <h3>Your CEFR Progress</h3>
+                <div class="cefr-level" id="cefrLevel">A2</div>
+                <p id="cefrMessage">You have completed the A2 Elementary level!</p>
+            </div>
+            <div style="margin-top:25px">
+                <div class="not-submitted" id="notSubmittedWarning">
+                    <h3>⚠️ NOT YET SUBMITTED</h3>
+                    <p>Click the button below to submit your results to your teacher</p>
+                </div>
+                <div class="submitted-success" id="submittedSuccess">
+                    <h3>✓ Submitted Successfully!</h3>
+                    <p>Your teacher will receive your results</p>
+                </div>
+                <button class="btn btn-orange" id="submitBtn" onclick="submitToTeacher()" style="margin-top:15px;font-size:20px;padding:20px">📤 Submit to Teacher</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const SESSION='A2 Session 16 (FINAL)';
+let studentName='',studentClass='',scores={l:0,v:0,w:0,s:0,g:0},writingText='',speechTranscript='';
+let isRec=false,mediaRec=null,chunks=[],recTime=0,recTimer=null;
+let readingAnswers=[],grammarAnswers=[];
+let selectedScenario='';
+
+const scenarioNames=['','Tenant and Landlord','Doctor/Nurse and Patient','Friends Sharing Vacation'];
+
+function selectScenario(el,num){
+    document.querySelectorAll('.scenario-option').forEach(o=>{
+        o.style.borderColor='#e0e0e0';
+        o.style.background='#fff';
+    });
+    el.style.borderColor='#2E7D32';
+    el.style.background='#e8f5e9';
+    selectedScenario=scenarioNames[num];
+    document.getElementById('scenarioSelected').textContent='Selected: '+selectedScenario;
+    document.getElementById('scenarioSelected').style.display='block';
+    document.getElementById('recBtn').style.display='flex';
+    document.getElementById('timer').style.display='block';
+    document.getElementById('recStatus').style.display='block';
+    document.getElementById('transcriptBox').style.display='block';
+}
+
+// Reading Questions
+const readingQBank=[
+    {q:"When did Maria move to the United States?",opts:["Last year","Two years ago","Three years ago"],correct:1},
+    {q:"What time does Maria usually start work?",opts:["6 AM","7 AM","8 AM"],correct:1},
+    {q:"What was the problem with Maria's apartment?",opts:["The sink was leaking","The heater was broken","There was no internet"],correct:1},
+    {q:"How did Maria ask for help?",opts:["She sent an email","She called and asked politely","She fixed it herself"],correct:1},
+    {q:"What does Maria want to become?",opts:["A doctor","A nurse","A teacher"],correct:1}
+];
+
+// Grammar Questions - A2 level (NO future tense)
+const grammarQBank=[
+    {q:"She _____ to work every day.",opts:["go","goes","going"],correct:1},
+    {q:"I am _____ English right now.",opts:["study","studies","studying"],correct:2},
+    {q:"Yesterday, I _____ my grandmother.",opts:["visit","visited","visiting"],correct:1},
+    {q:"_____ you help me, please?",opts:["Could","Do","Are"],correct:0},
+    {q:"He _____ at a hospital.",opts:["work","works","working"],correct:1},
+    {q:"They _____ to the beach last summer.",opts:["go","goes","went"],correct:2},
+    {q:"You _____ see a doctor if you feel sick.",opts:["should","are","do"],correct:0},
+    {q:"She _____ cooking dinner now.",opts:["is","does","was"],correct:0},
+    {q:"We _____ TV every evening.",opts:["watch","watches","watching"],correct:0},
+    {q:"I _____ to New York last month.",opts:["go","went","going"],correct:1}
+];
+
+// Vocabulary Questions - A2 topics
+const vocabQBank=[
+    {q:"The weather is very cold. It's _____.",opts:["sunny","freezing","windy"],correct:1},
+    {q:"My mother's brother is my _____.",opts:["cousin","uncle","nephew"],correct:1},
+    {q:"I have a bad cough. I should see a _____.",opts:["teacher","doctor","landlord"],correct:1},
+    {q:"I pay _____ to my landlord every month.",opts:["salary","deposit","rent"],correct:2},
+    {q:"My _____ told me to finish the report.",opts:["boss","tenant","patient"],correct:0},
+    {q:"Last summer, I _____ to the beach.",opts:["go","went","going"],correct:1},
+    {q:"She works 9-5. She has a _____ job.",opts:["part-time","night shift","full-time"],correct:2},
+    {q:"I have a _____. My head hurts.",opts:["stomachache","headache","toothache"],correct:1}
+];
+
+function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+}
+
+function initQuestions(){
+    // Reading
+    const rQs=shuffle([...readingQBank]).slice(0,3);
+    let rHTML='';
+    rQs.forEach((q,i)=>{
+        const opts=q.opts.map((o,idx)=>({text:o,isCorrect:idx===q.correct}));
+        shuffle(opts);
+        readingAnswers[i]=opts.findIndex(o=>o.isCorrect);
+        rHTML+=`<div class="question"><h4>${i+1}. ${q.q}</h4>`;
+        opts.forEach((o,j)=>{
+            rHTML+=`<div class="option" onclick="sel(this)" data-v="${j}"><div class="circle"></div>${o.text}</div>`;
+        });
+        rHTML+=`</div>`;
+    });
+    document.getElementById('readingQuestions').innerHTML=rHTML;
+
+    // Vocabulary
+    const vQs=shuffle([...vocabQBank]).slice(0,6);
+    let vHTML='';
+    vQs.forEach((q,i)=>{
+        const opts=q.opts.map((o,idx)=>({text:o,isCorrect:idx===q.correct}));
+        shuffle(opts);
+        const correctIdx=opts.findIndex(o=>o.isCorrect);
+        vHTML+=`<div class="question" data-correct="${correctIdx}"><h4>${i+1}. ${q.q}</h4>`;
+        opts.forEach((o,j)=>{
+            vHTML+=`<div class="option" onclick="sel(this)" data-v="${j}"><div class="circle"></div>${o.text}</div>`;
+        });
+        vHTML+=`</div>`;
+    });
+    document.getElementById('vocabQuestions').innerHTML=vHTML;
+
+    // Grammar
+    const gQs=shuffle([...grammarQBank]).slice(0,8);
+    let gHTML='';
+    gQs.forEach((q,i)=>{
+        const opts=q.opts.map((o,idx)=>({text:o,isCorrect:idx===q.correct}));
+        shuffle(opts);
+        grammarAnswers[i]=opts.findIndex(o=>o.isCorrect);
+        gHTML+=`<div class="question" data-c="${grammarAnswers[i]}"><h4>${i+1}. ${q.q}</h4>`;
+        opts.forEach((o,j)=>{
+            gHTML+=`<div class="option" onclick="sel(this)" data-v="${j}"><div class="circle"></div>${o.text}</div>`;
+        });
+        gHTML+=`</div>`;
+    });
+    document.getElementById('grammarQuestions').innerHTML=gHTML;
+}
+
+function startQuiz(){
+    studentName=document.getElementById('studentName').value.trim();
+    studentClass=document.getElementById('studentClass').value;
+    if(!studentName){alert('Please enter your name');return;}
+    if(!studentClass){alert('Please select your class');return;}
+    initQuestions();
+    goTo('s1');
+}
+
+function goTo(id){
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+}
+
+function goBack0(){
+    document.getElementById('s1').classList.remove('active');
+    document.getElementById('start').classList.add('active');
+}
+
+function sel(el){
+    el.parentElement.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function checkS1(){
+    let correct=0;
+    document.querySelectorAll('#readingQuestions .question').forEach((q,i)=>{
+        const selected=q.querySelector('.option.selected');
+        if(selected&&parseInt(selected.dataset.v)===readingAnswers[i])correct++;
+    });
+    scores.l=correct;
+    goTo('s2');
+}
+
+function checkS2(){
+    let correct=0;
+    document.querySelectorAll('#vocabQuestions .question').forEach(q=>{
+        const selected=q.querySelector('.option.selected');
+        const correctAns=parseInt(q.dataset.correct);
+        if(selected&&parseInt(selected.dataset.v)===correctAns)correct++;
+    });
+    scores.v=correct;
+    goTo('s3');
+}
+
+function updateWC(){
+    document.getElementById('wc').textContent=document.getElementById('writing').value.trim().split(/\s+/).filter(w=>w).length;
+}
+
+function checkWriting(){
+    writingText=document.getElementById('writing').value;
+    const t=writingText.toLowerCase();
+    const wc=t.trim().split(/\s+/).filter(w=>w).length;
+    
+    if(wc<10){
+        alert('Please write at least 10 words');
+        return;
+    }
+    
+    // Check for grammar errors
+    let errorCount=0;
+    
+    // Subject-verb agreement
+    if(/i goes|i works|i lives|i wakes|i eats/i.test(t)) errorCount++;
+    if(/he go |she go |he work |she work |he wake |she wake /i.test(t)) errorCount++;
+    
+    // Adverb position errors
+    if(/i (go|work|wake|eat|take|get) .{0,10}(always|usually|sometimes|never)/i.test(t)) errorCount++;
+    
+    // Check for daily routine vocabulary
+    const hasRoutine=/wake|morning|breakfast|lunch|dinner|work|school|home|evening|night|sleep|shower|brush/i.test(t);
+    const hasFrequency=/usually|always|every day|sometimes|often|never/i.test(t);
+    const hasTime=/\d|morning|afternoon|evening|night|noon/i.test(t);
+    
+    // Calculate score
+    let score=0;
+    score+=(hasRoutine?6:0);
+    score+=(hasFrequency?5:0);
+    score+=(hasTime?3:0);
+    score+=(wc>=50?4:wc>=30?3:wc>=20?2:1);
+    score-=(errorCount*3);
+    score=Math.max(0,Math.min(20,Math.round(score)));
+    
+    scores.w=score;
+    
+    let feedbackHTML='<h4>Feedback</h4>';
+    feedbackHTML+='<p>Word count: '+wc+'</p>';
+    if(errorCount>0){
+        feedbackHTML+='<p style="color:#ef4444"><strong>Grammar errors found: '+errorCount+'</strong></p>';
+    }
+    feedbackHTML+='<p><strong>Score: '+scores.w+'/20</strong></p>';
+    
+    document.getElementById('wFeedback').innerHTML=feedbackHTML;
+    document.getElementById('wFeedback').classList.remove('hidden');
+    document.getElementById('wBtn').classList.add('hidden');
+    document.getElementById('wNext').classList.remove('hidden');
+}
+
+// Speech Recognition - Short burst mode for Android compatibility
+async function toggleRec(){
+    if(!isRec){
+        try{
+            const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+            mediaRec=new MediaRecorder(stream);
+            chunks=[];
+            mediaRec.ondataavailable=e=>chunks.push(e.data);
+            mediaRec.onstop=()=>{
+                document.getElementById('audio').src=URL.createObjectURL(new Blob(chunks,{type:'audio/webm'}));
+                document.getElementById('audio').classList.remove('hidden');
+                document.getElementById('sBtn').disabled=false;
+            };
+            mediaRec.start();
+            isRec=true;
+            recTime=0;
+            document.getElementById('recBtn').classList.add('recording');
+            document.getElementById('recBtn').textContent='⏹';
+            document.getElementById('recStatus').textContent='Recording... Click to stop';
+            document.getElementById('transcriptBox').textContent='Listening...';
+            
+            // Speech recognition - restart on end for continuous-like behavior
+            const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+            if(SR){
+                const recognition=new SR();
+                recognition.continuous=false;
+                recognition.interimResults=false;
+                recognition.lang='en-US';
+                recognition.maxAlternatives=1;
+                
+                let fullTranscript='';
+                
+                recognition.onresult=function(e){
+                    const result=e.results[0][0].transcript;
+                    fullTranscript+=result+' ';
+                    speechTranscript=fullTranscript.trim();
+                    document.getElementById('transcriptBox').textContent=speechTranscript;
+                };
+                
+                recognition.onend=function(){
+                    if(isRec){
+                        try{recognition.start();}catch(e){}
+                    }
+                };
+                
+                recognition.onerror=function(e){
+                    if(e.error!=='no-speech'&&e.error!=='aborted'){
+                        console.log('Speech error:',e.error);
+                    }
+                    if(isRec){
+                        try{recognition.start();}catch(e){}
+                    }
+                };
+                
+                try{recognition.start();}catch(e){}
+                window.currentRecognition=recognition;
+            }else{
+                document.getElementById('transcriptBox').textContent='Speech-to-text not available on this device';
+            }
+            
+            recTimer=setInterval(()=>{
+                recTime++;
+                document.getElementById('timer').textContent=Math.floor(recTime/60)+':'+(recTime%60).toString().padStart(2,'0');
+            },1000);
+        }catch(e){alert('Microphone error: '+e.message);}
+    }else{
+        mediaRec.stop();
+        mediaRec.stream.getTracks().forEach(t=>t.stop());
+        clearInterval(recTimer);
+        isRec=false;
+        if(window.currentRecognition){
+            try{window.currentRecognition.stop();}catch(e){}
+        }
+        document.getElementById('recBtn').classList.remove('recording');
+        document.getElementById('recBtn').textContent='🎤';
+        document.getElementById('recStatus').textContent='Recording saved!';
+        
+        // Make sure we have the transcript
+        if(!speechTranscript||speechTranscript==='Listening...'){
+            speechTranscript='[Recording: '+Math.floor(recTime/60)+':'+(recTime%60).toString().padStart(2,'0')+']';
+            document.getElementById('transcriptBox').textContent=speechTranscript;
+        }
+    }
+}
+
+function checkSpeaking(){
+    scores.s=recTime>=30?20:recTime>=20?15:recTime>=10?10:5;
+    document.getElementById('sFeedback').innerHTML=`<h4>Feedback</h4><p>Duration: ${Math.floor(recTime/60)}:${(recTime%60).toString().padStart(2,'0')}</p><p><strong>Score: ${scores.s}/20</strong></p>`;
+    document.getElementById('sFeedback').classList.remove('hidden');
+    goTo('s5');
+}
+
+function submitFinal(){
+    let correct=0;
+    document.querySelectorAll('#grammarQuestions .question').forEach((q,i)=>{
+        const sel=q.querySelector('.option.selected');
+        const ans=parseInt(q.dataset.c);
+        if(sel){
+            if(parseInt(sel.dataset.v)===ans){
+                correct++;
+                sel.classList.add('correct');
+            }else{
+                sel.classList.add('incorrect');
+                q.querySelector('[data-v="'+ans+'"]').classList.add('correct');
+            }
+        }
+    });
+    scores.g=correct;
+    
+    const total=scores.l+scores.v+scores.w+scores.s+scores.g;
+    const pct=Math.round(total/57*100);
+    
+    document.getElementById('finalPct').textContent=pct+'%';
+    document.getElementById('studentDisplay').textContent=studentName+' ['+studentClass+']';
+    document.getElementById('scL').textContent=scores.l+'/3';
+    document.getElementById('scV').textContent=scores.v+'/6';
+    document.getElementById('scW').textContent=scores.w+'/20';
+    document.getElementById('scS').textContent=scores.s+'/20';
+    document.getElementById('scG').textContent=scores.g+'/8';
+    
+    // CEFR assessment
+    let cefrLevel='A2';
+    let cefrMsg='';
+    if(pct>=85){
+        cefrLevel='A2+ → B1';
+        cefrMsg='Excellent! You are ready to move to B1 Intermediate level!';
+    }else if(pct>=70){
+        cefrLevel='A2';
+        cefrMsg='Great job! You have solid A2 Elementary skills.';
+    }else if(pct>=50){
+        cefrLevel='A2-';
+        cefrMsg='Good progress! Keep practicing to strengthen your A2 skills.';
+    }else{
+        cefrLevel='A1+';
+        cefrMsg='You may need more practice at the A2 level before moving on.';
+    }
+    document.getElementById('cefrLevel').textContent=cefrLevel;
+    document.getElementById('cefrMessage').textContent=cefrMsg;
+    
+    goTo('results');
+}
+
+function submitToTeacher(){
+    const pct=Math.round((scores.l+scores.v+scores.w+scores.s+scores.g)/57*100);
+    const sn=studentName+' ['+studentClass+']';
+    const scenarioInfo=selectedScenario?'['+selectedScenario+'] ':'';
+    const transcript=scenarioInfo+(speechTranscript||'[Recording: '+Math.floor(recTime/60)+':'+(recTime%60).toString().padStart(2,'0')+']');
+    const cefrResult=document.getElementById('cefrLevel').textContent;
+    
+    const url='https://docs.google.com/forms/d/e/1FAIpQLSd9ACrRqGcnC8C0XEHLHNyTGGOlBwf7oMrwW7YixAjCWSlLfg/viewform?usp=pp_url'+
+        '&entry.518151516='+encodeURIComponent(sn)+
+        '&entry.864654596='+encodeURIComponent(SESSION)+
+        '&entry.258952242='+encodeURIComponent(scores.l+'/3')+
+        '&entry.859150584='+encodeURIComponent(scores.v+'/6')+
+        '&entry.939912807='+encodeURIComponent(writingText)+
+        '&entry.1121796741='+encodeURIComponent(scores.w+'/20')+
+        '&entry.2086302086='+encodeURIComponent(transcript)+
+        '&entry.1435469716='+encodeURIComponent(scores.s+'/20')+
+        '&entry.1998281944='+encodeURIComponent(scores.g+'/8')+
+        '&entry.1207114914='+encodeURIComponent(pct+'%')+
+        '&entry.73595410='+encodeURIComponent(cefrResult);
+    
+    document.getElementById('notSubmittedWarning').style.display='none';
+    document.getElementById('submittedSuccess').style.display='block';
+    document.getElementById('submitBtn').style.display='none';
+    window.open(url,'_blank');
+}
+</script>
+</body>
+</html>
